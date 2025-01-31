@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Category name="BAD_PRACTICE" />
+    </Match>
+
+    <Match>
+        <Category name="CORRECTNESS" />
+    </Match>
+
+    <Match>
+        <Category name="MALICIOUS_CODE" />
+    </Match>
+
+    <Match>
+        <Category name="SECURITY" />
+    </Match>
+
+    <Match>
+        <Category name="STYLE" />
+    </Match>
+
+    <Match>
+        <Category name="PERFORMANCE" />
+    </Match>
+
+
+</FindBugsFilter>

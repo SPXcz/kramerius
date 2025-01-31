@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+
+    <Match>
+        <Class name="~.*\.*Test" />
+        <Not>
+            <Bug code="IJU" /> <!-- 'IJU' is the code for bugs related to JUnit test code -->
+        </Not>
+    </Match>
+
+    <Match>
+        <Source name="~.*\.gradle" />
+    </Match>
+
+    <Match>
+        <Bug category="EXPERIMENTAL" />
+    </Match>
+
+    <Match>
+        <Bug category="STYLE" />
+        <Confidence value="2" />
+    </Match>
+
+    <Match>
+        <Bug category="MALICIOUS_CODE" />
+        <Confidence value="2" />
+        <Not>
+            <Or>
+                <Package name="~cz\.incad\.kramerius\.auth\.*" />
+                <Package name="~cz\.incad\.kramerius\.keycloak\.*" />
+                <Package name="~cz\.incad\.kramerius\.rest\.*" />
+            </Or>
+        </Not>
+    </Match>
+
+    <Match>
+        <Bug category="SECURITY" />
+        <Confidence value="2" />
+        <Not>
+            <Or>
+                <Package name="~cz\.incad\.kramerius\.auth\.*" />
+                <Package name="~cz\.incad\.kramerius\.keycloak\.*" />
+                <Package name="~cz\.incad\.kramerius\.rest\.*" />
+            </Or>
+        </Not>
+    </Match>
+
+</FindBugsFilter>

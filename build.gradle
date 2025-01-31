@@ -1,3 +1,6 @@
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.SpotBugsTask
+
 /*
  * Copyright (C) 2014 Pavel Stastny
  * 
@@ -31,6 +34,7 @@ buildScan {
 
 plugins {
     id 'com.google.cloud.tools.jib' version '3.4.4' apply false
+    id("com.github.spotbugs") version "6.1.3" apply false
 }
 
 if (!hasProperty('buildProfile')) ext.buildProfile = 'docker'  //supported profiles: dist, docker
@@ -179,8 +183,16 @@ allprojects {
             url "https://maven.java.net/content/repositories/snapshots/"
         }
 
-        maven {
+        /*maven {
             url "https://repository.springsource.com/maven/bundles/external"
+        }*/
+
+        /*maven {
+            url "https://repo1.maven.org/maven2/"
+        }*/
+
+        maven {
+            url "https://maven.geotoolkit.org/"
         }
 
         maven {
@@ -311,6 +323,38 @@ allprojects {
     javadoc {
         if(JavaVersion.current().isJava9Compatible()) {
             options.addBooleanOption('html5', true)
+        }
+    }
+}
+
+import com.github.spotbugs.snom.Effort
+import com.github.spotbugs.snom.Confidence
+subprojects {
+
+    apply plugin: 'com.github.spotbugs'
+
+    spotbugs {
+        ignoreFailures = true  // Do NOT fail the build on issues
+        showStackTraces = false
+        effort = Effort.MAX
+        excludeFilter = file("$rootDir/gradle/spotbugs/exclude.xml")
+        includeFilter = file("$rootDir/gradle/spotbugs/include.xml")
+    }
+
+    dependencies {
+        spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+    }
+
+    tasks.withType(SpotBugsTask).tap {
+
+        group 'Verification'
+        description 'Run Spotbugs on this project. No fail, only generates report.'
+
+        configureEach {
+            reports {
+                xml.enabled = false
+                html.enabled = true
+            }
         }
     }
 }
