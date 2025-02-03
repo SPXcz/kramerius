@@ -45,11 +45,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class AkubraDOManager {
     public static final Logger LOGGER = Logger.getLogger(AkubraDOManager.class.getName());
     private KConfiguration configuration = KConfiguration.getInstance();
     private ILowlevelStorage storage;
+
+    private static final BlockingQueue<Unmarshaller> unmarshallerPool = new LinkedBlockingQueue<>(50);
 
     private static HazelcastInstance hzInstance;
     //private static IMap<String, Integer> pidLocks;
@@ -60,14 +64,15 @@ public class AkubraDOManager {
     private static Cache<String, DigitalObject> objectCache;
     private static final String DIGITALOBJECT_CACHE_ALIAS = "DigitalObjectCache";
 
-    private static Unmarshaller unmarshaller = null;
     private static Marshaller marshaller = null;
 
     static {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(DigitalObject.class);
 
-            unmarshaller = jaxbContext.createUnmarshaller();
+            for (int i = 0; i < 50; i++) {
+                unmarshallerPool.offer(jaxbContext.createUnmarshaller());
+            }
 
 
             //JAXBContext jaxbdatastreamContext = JAXBContext.newInstance(DatastreamType.class);
@@ -205,9 +210,9 @@ public class AkubraDOManager {
             Object obj = null;
             Lock lock = getReadLock(pid);
             try (InputStream inputStream = this.storage.retrieveObject(pid);){
-                synchronized (unmarshaller) {
-                    obj = unmarshaller.unmarshal(inputStream);
-                }
+                Unmarshaller unmarshaller = unmarshallerPool.take();
+                obj = unmarshaller.unmarshal(inputStream);
+                unmarshallerPool.offer(unmarshaller);
             } catch (ObjectNotInLowlevelStorageException ex) {
                 return null;
             } catch (Exception e) {
