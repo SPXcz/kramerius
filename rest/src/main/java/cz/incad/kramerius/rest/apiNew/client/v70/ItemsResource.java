@@ -358,6 +358,8 @@ public class ItemsResource extends ClientApiResource {
         }
     }
 
+    // TODO(PossibleBottleneck): every is* call acquires read lock, and for some reason acquiring read lock last in average 17ms
+    // Therefore 10 * 17 = 170ms minimum for this method
     private JSONObject extractAvailableDataInfo(String pid) throws IOException, RepositoryException {
         JSONObject dataAvailable = new JSONObject();
         //metadata
