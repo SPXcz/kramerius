@@ -104,11 +104,13 @@ public class RightImpl implements Right, Serializable {
 
 
 
-    // TODO(PossibleBottleneck): find out why is here synchronized
+    // TODO(PossibleBottleneck): find out why is synchronization needed here
     // Stats:
-    // - In 10 minutes of performance test, this method was called 15,502 times with execution time on average 25ms. That is 387,550ms ~ 6 minutes.
+    // - With Synchronization: In ~10 minutes of performance test, this method was called 15,502 times with execution time on average 25ms. That is 387,550ms ~ 6 minutes.
+    // - Without Synchronization: In ~10 minutes of performance test, this method was called 15,624 times with execution time on average 22ms.
+    // The issue probably lies deeper in the code, possibly in the implementation of the RightCriterium.evalute (This interface is implemented by various classes within ./criteria directory).
     @Override 
-    public EvaluatingResultState evaluate(RightCriteriumContext ctx, RightsManager rightsManager) throws RightCriteriumException {
+    public synchronized EvaluatingResultState evaluate(RightCriteriumContext ctx, RightsManager rightsManager) throws RightCriteriumException {
         if (this.crit != null){
             RightCriterium rCrit = this.crit.getRightCriterium();
             rCrit.setEvaluateContext(ctx);

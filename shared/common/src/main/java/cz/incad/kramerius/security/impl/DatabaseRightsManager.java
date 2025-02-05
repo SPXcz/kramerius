@@ -253,6 +253,10 @@ public class DatabaseRightsManager implements RightsManager {
         findRights = SortingRightsUtils.sortRights(findRights, processPath);
         for (Right right : findRights) {
             ctx.setAssociatedPid(right.getPid());
+            // TODO(PossibleBottleneck):
+            // - With synchronization this method DatabaseRightsManager.resolve took on average 372ms 
+            // - Without synchronization this method DatabaseRightsManager.resolve took on average 325ms instead 
+            // No side effects were observed, but I don't know if some synchronization for this method (right.evaluate) is necessary.
             EvaluatingResultState result = right.evaluate(ctx, this);
             ctx.setAssociatedPid(null);
             if (result != EvaluatingResultState.NOT_APPLICABLE)
