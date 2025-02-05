@@ -104,6 +104,9 @@ public class RightImpl implements Right, Serializable {
 
 
 
+    // TODO(PossibleBottleneck): find out why is here synchronized
+    // Stats:
+    // - In 10 minutes of performance test, this method was called 15,502 times with execution time on average 25ms. That is 387,550ms ~ 6 minutes.
     @Override 
     public synchronized EvaluatingResultState evaluate(RightCriteriumContext ctx, RightsManager rightsManager) throws RightCriteriumException {
         if (this.crit != null){
