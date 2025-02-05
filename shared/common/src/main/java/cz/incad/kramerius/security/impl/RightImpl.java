@@ -108,7 +108,7 @@ public class RightImpl implements Right, Serializable {
     // Stats:
     // - In 10 minutes of performance test, this method was called 15,502 times with execution time on average 25ms. That is 387,550ms ~ 6 minutes.
     @Override 
-    public synchronized EvaluatingResultState evaluate(RightCriteriumContext ctx, RightsManager rightsManager) throws RightCriteriumException {
+    public EvaluatingResultState evaluate(RightCriteriumContext ctx, RightsManager rightsManager) throws RightCriteriumException {
         if (this.crit != null){
             RightCriterium rCrit = this.crit.getRightCriterium();
             rCrit.setEvaluateContext(ctx);
