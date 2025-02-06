@@ -491,10 +491,10 @@ public class AkubraDOManager {
         }
         long start = System.currentTimeMillis();
         ReadWriteLock lock = lockService.getReentrantReadWriteLock(pid);
-        System.out.println("getReadLock:" + (System.currentTimeMillis() - start));
+        LOGGER.info("getReadLock1:" + (System.currentTimeMillis() - start));
         start = System.currentTimeMillis();
         lock.readLock().lock();
-        System.out.println("getReadLock2:" + (System.currentTimeMillis() - start));
+        LOGGER.info("getReadLock2:" + (System.currentTimeMillis() - start));
         return lock.readLock();
     }
 
