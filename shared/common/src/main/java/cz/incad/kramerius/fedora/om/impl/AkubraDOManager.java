@@ -491,13 +491,13 @@ public class AkubraDOManager {
         }
         long start = System.currentTimeMillis();
         ReadWriteLock lock = lockService.getReentrantReadWriteLock(pid);
-        LOGGER.info("getReadLock1:" + (System.currentTimeMillis() - start));
+        LOGGER.info("getReadLock1;" + pid + ";" + (System.currentTimeMillis() - start));
         start = System.currentTimeMillis();
         Lock readLock = lock.readLock();
-        LOGGER.info("getReadLock2:" + (System.currentTimeMillis() - start));
+        LOGGER.info("getReadLock2;" + pid + ";" + (System.currentTimeMillis() - start));
         start = System.currentTimeMillis();
         readLock.lock();
-        LOGGER.info("getReadLock3:" + (System.currentTimeMillis() - start));
+        LOGGER.info("getReadLock3;" + pid + ";" + (System.currentTimeMillis() - start));
         return readLock;
     }
 
