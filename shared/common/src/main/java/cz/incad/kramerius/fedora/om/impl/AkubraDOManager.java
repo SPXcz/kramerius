@@ -489,8 +489,12 @@ public class AkubraDOManager {
         if (pid == null) {
             throw new IllegalArgumentException("pid cannot be null");
         }
+        long start = System.currentTimeMillis();
         ReadWriteLock lock = lockService.getReentrantReadWriteLock(pid);
+        System.out.println("getReadLock:" + (System.currentTimeMillis() - start));
+        start = System.currentTimeMillis();
         lock.readLock().lock();
+        System.out.println("getReadLock2:" + (System.currentTimeMillis() - start));
         return lock.readLock();
     }
 
