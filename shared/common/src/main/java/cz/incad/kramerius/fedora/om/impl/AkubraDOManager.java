@@ -493,9 +493,12 @@ public class AkubraDOManager {
         ReadWriteLock lock = lockService.getReentrantReadWriteLock(pid);
         LOGGER.info("getReadLock1:" + (System.currentTimeMillis() - start));
         start = System.currentTimeMillis();
-        lock.readLock().lock();
+        Lock readLock = lock.readLock();
         LOGGER.info("getReadLock2:" + (System.currentTimeMillis() - start));
-        return lock.readLock();
+        start = System.currentTimeMillis();
+        readLock.lock();
+        LOGGER.info("getReadLock3:" + (System.currentTimeMillis() - start));
+        return readLock;
     }
 
     private static void invalidateCache(String pid) {
