@@ -489,16 +489,9 @@ public class AkubraDOManager {
         if (pid == null) {
             throw new IllegalArgumentException("pid cannot be null");
         }
-        long start = System.currentTimeMillis();
         ReadWriteLock lock = lockService.getReentrantReadWriteLock(pid);
-        LOGGER.info("getReadLock1;" + pid + ";" + (System.currentTimeMillis() - start));
-        start = System.currentTimeMillis();
-        Lock readLock = lock.readLock();
-        LOGGER.info("getReadLock2;" + pid + ";" + (System.currentTimeMillis() - start));
-        start = System.currentTimeMillis();
-        readLock.lock();
-        LOGGER.info("getReadLock3;" + pid + ";" + (System.currentTimeMillis() - start));
-        return readLock;
+        lock.readLock().lock();
+        return lock.readLock();
     }
 
     private static void invalidateCache(String pid) {

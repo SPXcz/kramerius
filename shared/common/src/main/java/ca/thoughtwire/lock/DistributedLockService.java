@@ -14,7 +14,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.logging.Logger;
 
 /**
  * A factory for distributed locks.
@@ -22,7 +21,6 @@ import java.util.logging.Logger;
  * @author vanessa.williams
  */
 public class DistributedLockService implements GridMembershipListener {
-    public static final Logger LOGGER = Logger.getLogger(DistributedLockService.class.getName());
 
     /**
      * Static factory method for creating a lock service instance.
@@ -95,7 +93,6 @@ public class DistributedLockService implements GridMembershipListener {
         else {
             final DistributedReentrantReadWriteLock lock = new DistributedReentrantReadWriteLock(this, lockName);
             THREAD_LOCKS.put(lockName, lock);
-            LOGGER.info("THREAD_LOCKS_SIZE:" + THREAD_LOCKS.size());
             return lock;
         }
 
