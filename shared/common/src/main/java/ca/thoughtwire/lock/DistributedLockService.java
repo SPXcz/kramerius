@@ -22,6 +22,8 @@ import java.util.concurrent.locks.ReadWriteLock;
  */
 public class DistributedLockService implements GridMembershipListener {
 
+    private static final int MAX_LOCKS = 5000;
+
     /**
      * Static factory method for creating a lock service instance.
      *
@@ -86,6 +88,10 @@ public class DistributedLockService implements GridMembershipListener {
      */
     public ReadWriteLock getReentrantReadWriteLock(final String lockName)
     {
+        if (THREAD_LOCKS.size() > MAX_LOCKS) {
+            THREAD_LOCKS.clear();
+        }
+
         if (THREAD_LOCKS.containsKey(lockName))
         {
             return THREAD_LOCKS.get(lockName);
