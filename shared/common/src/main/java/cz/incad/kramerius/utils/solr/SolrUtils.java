@@ -292,6 +292,7 @@ public class SolrUtils   {
         }
     }
     
+    // TODO(PossibleBottleneck): find out why is synchronization needed here
     public static List<String> disectLicenses(Element topElem) {
         synchronized(topElem.getOwnerDocument()) {
 
