@@ -101,7 +101,9 @@ public abstract class AbstractThirdPartyUsersSupport<T extends ThirdPartyUser> i
     protected abstract T createUserWrapper(HttpServletRequest req, String userName) throws Exception;
 
     
-    public synchronized String storeUserPropertiesToSession(HttpServletRequest req, String userName) throws Exception {
+    // TODO(PossibleBottleneck): It really slows down the performance for logged in users
+    // public synchronized String storeUserPropertiesToSession(HttpServletRequest req, String userName) throws Exception {
+    public String storeUserPropertiesToSession(HttpServletRequest req, String userName) throws Exception {
         String password = null;
         T wrapper = createUserWrapper(req, userName);
 
