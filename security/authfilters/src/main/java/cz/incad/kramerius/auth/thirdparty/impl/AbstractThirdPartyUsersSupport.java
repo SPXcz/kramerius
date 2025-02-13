@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -18,7 +19,7 @@ import cz.incad.kramerius.users.LoggedUsersSingleton;
 
 public abstract class AbstractThirdPartyUsersSupport<T extends ThirdPartyUser> implements ThirdPartyUsersSupport {
 
-    protected Map<String, String> credentials = new HashMap<String, String>();
+    protected Map<String, String> credentials = new ConcurrentHashMap<String, String>();
     protected UserManager usersManager;
     //protected LoggedUsersSingleton loggedUsersSingleton;
 
@@ -62,13 +63,17 @@ public abstract class AbstractThirdPartyUsersSupport<T extends ThirdPartyUser> i
         } else return req;
     }
     
+    // TODO(PossibleBottleneck):
     @Override
-    public synchronized void disconnectUser(String userName) {
+    // public synchronized void disconnectUser(String userName) {
+    public void disconnectUser(String userName) {
         this.credentials.remove(userName);
     }
     
+    // TODO(PossibleBottleneck):
     @Override
-    public synchronized String getUserPassword(String userName) {
+    // public synchronized String getUserPassword(String userName) {
+    public String getUserPassword(String userName) {
         return this.credentials.get(userName);
     }
 
@@ -107,15 +112,15 @@ public abstract class AbstractThirdPartyUsersSupport<T extends ThirdPartyUser> i
         String password = null;
         T wrapper = createUserWrapper(req, userName);
 
-        
-        if (checkIfUserExists(userName)) {
-            password = updateExistingUser(userName, wrapper);
-        } else {
-            password = createNewUser(userName, wrapper);
+        synchronized (userName.intern()) {
+            if (checkIfUserExists(userName)) {
+                password = updateExistingUser(userName, wrapper);
+            } else {
+                password = createNewUser(userName, wrapper);
+            }
         }
     
         this.credentials.put(userName, password);
-
 
         req.getSession().setAttribute(UserUtils.USER_NAME_PARAM, userName);
         req.getSession().setAttribute(UserUtils.PSWD_PARAM, password);
