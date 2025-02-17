@@ -62,19 +62,23 @@ public class AkubraDOManager {
     private static Cache<String, DigitalObject> objectCache;
     private static final String DIGITALOBJECT_CACHE_ALIAS = "DigitalObjectCache";
 
+    private static BlockingQueue<Unmarshaller> unmarshallerPool = null;
     private static Marshaller marshaller = null;
-
-    private static final BlockingQueue<Unmarshaller> unmarshallerPool = new LinkedBlockingQueue<>(50);
 
     static {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(DigitalObject.class);
 
-            for (int i = 0; i < 50; i++) {
+            int unmarshallerPoolSize = KConfiguration.getInstance().getUnmarshallerPoolSize();
+            unmarshallerPool = new LinkedBlockingQueue<>(unmarshallerPoolSize);
+            for (int i = 0; i < unmarshallerPoolSize; i++) {
                 unmarshallerPool.offer(jaxbContext.createUnmarshaller());
             }
 
+            //JAXBContext jaxbdatastreamContext = JAXBContext.newInstance(DatastreamType.class);
             marshaller = jaxbContext.createMarshaller();
+
+
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot init JAXB", e);
             throw new RuntimeException(e);
